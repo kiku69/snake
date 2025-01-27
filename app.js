@@ -8,20 +8,39 @@ gameBoardDiv.style.gridTemplateColumns = `repeat(${width}, 8px)`;
 gameBoardDiv.style.gridTemplateRows = `repeat(${width}, 8px)`;
 
 let snake = [Math.floor(width / 2), Math.floor(height / 2)];
-let direction
+let direction = 'up'
 
 const intervalId = setInterval(run, speed);
-
-drawGameBoard();
 
 function run () {
     updateSnake();
     drawGameBoard();
 }
 
+document.addEventListener('keydown', e => {
+    switch ( e.key.toLowerCase ) {
+        case 'arrowup':
+        case 'w':
+            direction = 'up';
+            break;
+            case 'arrowdown':
+        case 's':
+            direction = 'down';
+            break;
+            case 'arrowleft':
+        case 'a':
+            direction = 'left';
+            break;
+            case 'arrowright':
+        case 'd':
+            direction = 'right';
+            break;
+    }
+});
+
 function drawGameBoard () {
 
-    gameBoardId
+    gameBoardDiv.innerHTML = '';
 
     for (let y = 0; y < width; y++) {
 
@@ -47,20 +66,37 @@ function updateSnake () {
 
     switch (direction) {
         case 'up':
-            y--;
+            if ( y == 0 ) {
+                y = height - 1;
+            } else {
+                y--;
+            }
             break;
         case 'down':
+            if ( y == height -1 ) {
+                y = 0;
+            } else {
             y++;
+            }
             break;
         case 'left':
+            if ( y == 0 ) {
+                y = height - 1;
+            } else {
             x--;
+            }
             break;
         case 'right':
+            if ( y == 0 ) {
+                y = height - 1;
+            } else {
             x++;
+            }
             break;
     }
 
     snake.shift();
+    snake.push(`${y}_${x}`);
 
 
 }
