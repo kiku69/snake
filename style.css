@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#game-board {
+    display: grid;
+    grid-gap: 1px;
+    background-color: black;
+    border: 1px solid grey;
+}
+
+#game-board div {
+    background-color: white;
+}
