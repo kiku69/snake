@@ -12,10 +12,11 @@ body {
 #game-board {
     display: grid;
     grid-gap: 1px;
-    background-color: black;
-    border: 1px solid grey;
+    background-color: #cccccc;
+    border: 1px solid #cccccc;
 }
 
 #game-board div {
     background-color: white;
+    font-size: 10px;
 }
