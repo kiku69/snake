@@ -6,7 +6,7 @@ class Snake {
         this.snake = [Math.floor(height / 2) + '_' + Math.floor(width / 2)];
     }
 
-    update ( gameBoard, food, direction, throughWalls, stopGame ) {
+    update ( game, gameBoard, food, direction, throughWalls, stopGame, score, currentScoreSpan, acceleration, speed ) {
         
         let [y, x] = this.coordinates[0].split('_');
 

@@ -1,11 +1,8 @@
+import { Game } from "./src/Game.js";
 import { GameBoard } from "./src/GameBoard.js";
 import { Food } from "./src/Food.js";
 import { Snake } from "./src/Snake.js";
 
-const messageDiv = document.getElementById('message');
-const resetGameBtn = document.getElementById('reset-game');
-const currentScoreSpan = document.getElementById('current-score');
-const highScoreSpan = document.getElementById('high-score');
 const throughWallsInput = document.getElementById('through-walls');
 const speedUpInput = document.getElementById('speed-up');
 
@@ -17,6 +14,7 @@ const foodEmojis = ['🚭'];
 
 let direction, score, highScore, intervalId, throughWalls, speedUp;
 
+const game = new Game(gameBoard, snake, food);
 const gameBoard = new GameBoard(width, height);
 const snake = new Snake{gameBoard};
 const food = new Food(foodEmojis);
@@ -27,7 +25,7 @@ initGame();
 function initGame () {
 
     direction = 'up';
-    speed = 200;
+    game.speed = 200;
     
     highScore = localStorage.getItem('snakeHighScore') ?? 0;
     highScoreSpan.innerText = highScore;
@@ -63,18 +61,6 @@ function initOptions () {
     
 }
 
-function run () {
-    clearInterval(intervalId);
-    snake.update(gameBoard, food, direction, throughWalls, stopGame);
-    gameBoard.draw(snake, food);
-
-    if ( isGameOver() ) {
-        stopGame();
-    } else {
-        intervalId = setInterval(run, speed);
-    }
-}
-
 document.addEventListener('keydown', e => {
     switch ( e.key.toLowerCase() ) {
         case 'arrowup':
@@ -108,14 +94,3 @@ function isGameOver () {
 
 }
 
-function stopGame () {
-
-    clearInterval(intervalId);
-    messageDiv.innerText = 'Mäng läbi!';
-    resetGameBtn.classList.remove('hidden');
-
-    if ( score > highScore ) {
-        localStorage.setItem('snakeHighScore', score);
-    }
-
-}
