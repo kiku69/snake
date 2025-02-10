@@ -1,5 +1,7 @@
+import { GameBoard } from "./src/GameBoard.js";
+import { Food } from "./src/Food.js";
+import { Snake } from "./src/Snake.js";
 
-const gameBoardDiv = document.getElementById('game-board');
 const messageDiv = document.getElementById('message');
 const resetGameBtn = document.getElementById('reset-game');
 const currentScoreSpan = document.getElementById('current-score');
@@ -11,19 +13,19 @@ const height = 25;
 const width = 25;
 let speed = 200;
 const acceleration = 1;
-const food = ['🚭'];
+const foodEmojis = ['🚭'];
 
-gameBoardDiv.style.gridTemplateColumns = `repeat(${width}, 12px)`;
-gameBoardDiv.style.gridTemplateRows = `repeat(${height}, 12px)`;
+let direction, score, highScore, intervalId, throughWalls, speedUp;
 
-let snake, direction, foodY, foodX, foodIndex, score, highScore, intervalId, throughWalls, speedUp;
+const gameBoard = new GameBoard(width, height);
+const snake = new Snake{gameBoard};
+const food = new Food(foodEmojis);
 
 initOptions();
 initGame();
 
 function initGame () {
 
-    snake = [Math.floor(height / 2) + '_' + Math.floor(width / 2)];
     direction = 'up';
     speed = 200;
     
@@ -33,7 +35,7 @@ function initGame () {
     score = 0;
     currentScoreSpan.innerText = score;
 
-    generateFood();
+    food.generate(gameBoard, snake);
 
     messageDiv.innerText = '';
     resetGameBtn.classList.add('hidden');
@@ -63,8 +65,8 @@ function initOptions () {
 
 function run () {
     clearInterval(intervalId);
-    updateSnake();
-    drawGameBoard();
+    snake.update(gameBoard, food, direction, throughWalls, stopGame);
+    gameBoard.draw(snake, food);
 
     if ( isGameOver() ) {
         stopGame();
@@ -95,113 +97,6 @@ document.addEventListener('keydown', e => {
 });
 
 resetGameBtn.addEventListener('click', () => initGame());
-
-function drawGameBoard () {
-
-    gameBoardDiv.innerHTML = '';
-    
-    for ( let y = 0; y < width; y++ ) {
-    
-        for ( let x = 0; x < height; x++ ) {
-    
-            const cellDiv = document.createElement('div');
-    
-            if ( snake.includes(`${y}_${x}`) ) {
-                cellDiv.innerText = '🚬';
-            }
-
-            if ( y == foodY && x == foodX ) {
-                cellDiv.innerText = food[foodIndex];
-            }
-            
-            gameBoardDiv.appendChild(cellDiv);
-    
-        }
-    
-    }
-    
-}
-
-function updateSnake () {
-    
-    let [y, x] = snake[0].split('_');
-
-    switch ( direction ) {
-        case 'up':
-            if ( y == 0 ) {
-                if ( throughWalls ) {
-                    y = height - 1;
-                } else {
-                    stopGame();
-                }
-            } else {
-                y--;
-            }
-            break;
-        case 'down':
-            if ( y == height - 1 ) {
-                if ( throughWalls ) {
-                    y = 0;
-                } else {
-                    stopGame();
-                }
-            } else {
-                y++;
-            }
-            break;
-        case 'left':
-            if ( x == 0 ) {
-                if ( throughWalls ) {
-                    x = width - 1;
-                } else {
-                    stopGame();
-                }
-            } else {
-                x--;
-            }
-            break;
-        case 'right':
-            if ( x == width - 1 ) {
-                if ( throughWalls ) {
-                    x = 0;
-                } else {
-                    stopGame();
-                }
-            } else {
-                x++;
-            }
-            break;
-    }
-
-    snake.unshift(`${y}_${x}`);
-    
-    if ( y == foodY && x == foodX ) {
-
-        score++;
-        currentScoreSpan.innerText = score;
-
-        if ( score % acceleration == 0 ) {
-            speed -= 5;
-        }
-
-        generateFood();
-
-    } else {
-        snake.pop();
-    }
-
-}
-
-function generateFood () {
-    
-    do {
-        foodY = Math.floor(Math.random() * height);
-        foodX = Math.floor(Math.random() * width);
-    } while ( snake.includes(`${foodY}_${foodX}`) );
-    
-    foodIndex = Math.floor(Math.random() * food.length);
-
-}
 
 function isGameOver () {
 
