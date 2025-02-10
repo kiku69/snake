@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,17 +11,30 @@
     
     <div class="container">
 
-        <div id="message"></div>
-
-        <div class="score-container">
-            <div>Skoor: <span id="current-score"></span></div>
-           <div>Rekord: <span id="high-score"></span></div>
+        <div class="options">
+            <div>
+                <span>Läbi seinte:</span><input type="checkbox" id="through-walls">
+            </div>
+            <div>
+                <span>Kiirus kasvab:</span><input type="checkbox" id="speed-up">
+            </div>
         </div>
 
-        <div id="game-board">
-        </div>
+        <div class="main">
 
-        <button id="reset_game" class="hidden">Alusta uuesti</button>
+            <div id="message"></div>
+
+            <div class="score-container">
+                <div>Skoor: <span id="current-score"></span></div>
+                <div>Rekord: <span id="high-score"></span></div>
+            </div>
+
+            <div id="game-board">
+            </div>
+
+            <button id="reset-game" class="hidden">Alusta uuesti</button>
+
+        </div>
 
     </div>
 

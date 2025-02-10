@@ -1,36 +1,76 @@
+
 const gameBoardDiv = document.getElementById('game-board');
 const messageDiv = document.getElementById('message');
 const resetGameBtn = document.getElementById('reset-game');
 const currentScoreSpan = document.getElementById('current-score');
 const highScoreSpan = document.getElementById('high-score');
+const throughWallsInput = document.getElementById('through-walls');
+const speedUpInput = document.getElementById('speed-up');
 
-const height = 10;
-const width = 10;
-const speed = 200;
-const food = ['🍎', '🍉', '🍇', '🍔', '🧁', '🥪'];
+const height = 25;
+const width = 25;
+let speed = 200;
+const acceleration = 1;
+const food = ['🚭'];
 
 gameBoardDiv.style.gridTemplateColumns = `repeat(${width}, 12px)`;
 gameBoardDiv.style.gridTemplateRows = `repeat(${height}, 12px)`;
 
-let snake = [Math.floor(height / 2) + '_' + Math.floor(width / 2)];
-let direction = 'up';
-let foodY, foodX, foodIndex;
-let score = 0;
+let snake, direction, foodY, foodX, foodIndex, score, highScore, intervalId, throughWalls, speedUp;
 
-let highScore = localStorage.getItem('snakeHighScore') ?? 0;
-highScoreSpan.innerText = highScore;
+initOptions();
+initGame();
 
-generateFood();
+function initGame () {
 
-const intervalId = setInterval(run, speed);
+    snake = [Math.floor(height / 2) + '_' + Math.floor(width / 2)];
+    direction = 'up';
+    speed = 200;
+    
+    highScore = localStorage.getItem('snakeHighScore') ?? 0;
+    highScoreSpan.innerText = highScore;
+    
+    score = 0;
+    currentScoreSpan.innerText = score;
 
-function run () {
-    updateSnake();
-    drawGameBoard();
+    generateFood();
+
+    messageDiv.innerText = '';
+    resetGameBtn.classList.add('hidden');
+
+    intervalId = setInterval(run, speed);
 }
 
-if ( isGameOver() ) {
+function initOptions () {
 
+    throughWalls = Number(localStorage.getItem('snakeThroughWalls') ?? 0);
+    throughWallsInput.checked = !!throughWalls;
+    
+    speedUp = Number(localStorage.getItem('snakeSpeedUp') ?? 0);
+    speedUpInput.checked = !!speedUp;
+    
+    throughWallsInput.addEventListener('change', () => {
+        throughWalls = !throughWalls ? 1 : 0;
+        localStorage.setItem('snakeThroughWalls', throughWalls);
+    });
+    
+    speedUpInput.addEventListener('change', () => {
+        speedUp = !speedUp ? 1 : 0;
+        localStorage.setItem('snakeSpeedUp', speedUp);
+    });
+    
+}
+
+function run () {
+    clearInterval(intervalId);
+    updateSnake();
+    drawGameBoard();
+
+    if ( isGameOver() ) {
+        stopGame();
+    } else {
+        intervalId = setInterval(run, speed);
+    }
 }
 
 document.addEventListener('keydown', e => {
@@ -67,7 +107,7 @@ function drawGameBoard () {
             const cellDiv = document.createElement('div');
     
             if ( snake.includes(`${y}_${x}`) ) {
-                cellDiv.innerText = '🪳';
+                cellDiv.innerText = '🚬';
             }
 
             if ( y == foodY && x == foodX ) {
@@ -89,28 +129,44 @@ function updateSnake () {
     switch ( direction ) {
         case 'up':
             if ( y == 0 ) {
-                y = height - 1;
+                if ( throughWalls ) {
+                    y = height - 1;
+                } else {
+                    stopGame();
+                }
             } else {
                 y--;
             }
             break;
         case 'down':
             if ( y == height - 1 ) {
-                y = 0;
+                if ( throughWalls ) {
+                    y = 0;
+                } else {
+                    stopGame();
+                }
             } else {
                 y++;
             }
             break;
         case 'left':
             if ( x == 0 ) {
-                x = width - 1;
+                if ( throughWalls ) {
+                    x = width - 1;
+                } else {
+                    stopGame();
+                }
             } else {
                 x--;
             }
             break;
         case 'right':
             if ( x == width - 1 ) {
-                x = 0;
+                if ( throughWalls ) {
+                    x = 0;
+                } else {
+                    stopGame();
+                }
             } else {
                 x++;
             }
@@ -121,10 +177,15 @@ function updateSnake () {
     
     if ( y == foodY && x == foodX ) {
 
-        score++
+        score++;
         currentScoreSpan.innerText = score;
 
+        if ( score % acceleration == 0 ) {
+            speed -= 5;
+        }
+
         generateFood();
+
     } else {
         snake.pop();
     }
@@ -143,20 +204,23 @@ function generateFood () {
 }
 
 function isGameOver () {
-    
+
     if ( snake.slice(1).includes(snake[0]) ) {
         return true;
     }
 
     return false;
+
 }
 
 function stopGame () {
+
     clearInterval(intervalId);
-    messageDiv.innerText = 'Game over';
+    messageDiv.innerText = 'Mäng läbi!';
     resetGameBtn.classList.remove('hidden');
 
     if ( score > highScore ) {
         localStorage.setItem('snakeHighScore', score);
     }
+
 }

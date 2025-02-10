@@ -3,10 +3,31 @@ body {
 }
 
 .container {
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    margin: auto;
+}
+
+.options {
+    font-size: 1rem;
+    font-family: sans-serif;
+    margin-right: 1rem;
+}
+
+.options div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
 }
 
 #game-board {
@@ -19,4 +40,31 @@ body {
 #game-board div {
     background-color: white;
     font-size: 10px;
+}
+
+#message {
+    font-size: 2.4rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    height: 3rem;
+    color: cadetblue;
+}
+
+.score-container {
+    display: flex;
+    justify-content: space-between;
+    width: -webkit-fill-available;
+    font-family: sans-serif;
+    font-size: 1.6rem;
+    padding: 0.3rem 0.8rem;
+}
+
+#reset-game {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+}
+
+.hidden {
+    visibility: hidden;
 }
